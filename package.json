@@ -1,0 +1,22 @@
+{
+  "name": "vapor",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "dom-delegator": "^12.0.0",
+    "main-loop": "^3.0.0",
+    "observ-struct": "^6.0.0",
+    "observ": "^0.2.0",
+    "value-event": "^4.1.0",
+    "xtend": "^4.0.0",
+    "virtual-dom": "0.0.24",
+    "observ-array": "~3.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD-2-Clause"
+}
