@@ -1,42 +1,66 @@
-var State = require('./state.js')
-var View = require('./view.js')
-var Controller = require('./controller.js')
+var extend = require('xtend')
+var val = require('observ')
+var array = require('observ-array')
 
-module.exports = WalletComponent
+var WalletComponent = require('../wallet/index.js')
+
+module.exports = setupState
 
 
-function WalletComponent() {
+function setupState() {
 
-  this.state = State()
-  this.view = View
-  this.controller = channels(Controller, this.state)
+  var defaultState = {
+    wallets: array([]),
+
+    channels: {
+      newIdentity: newIdentity,
+    }
+  }
+
+  var copy = extend(defaultState)
+  var state = setupComponent(copy)
+  return state
 
 }
 
-// base class
-
-var proto = WalletComponent.prototype
-
-proto.render = function(){
-  return this.view(this.state, this.controller)
+function newIdentity(state){
+  var newWallet = WalletComponent()
+  state.wallets.push(newWallet)
 }
 
 
-
-// utils
+// util -- from mercury itself
 var Delegator = require('dom-delegator')
+var observStruct = require('observ-struct')
 
+function setupComponent(obj) {
+    var copy = extend(obj)
+    var $channels = copy.channels
+    var $handles = copy.handles
 
+    if ($channels) {
+        copy.channels = val(null)
+    } else if ($handles) {
+        copy.handles = val(null)
+    }
+
+    var observ = observStruct(copy)
+    if ($channels) {
+        observ.channels.set(channels($channels, observ))
+    } else if ($handles) {
+        observ.handles.set(channels($handles, observ))
+    }
+    return observ
+}
 
 function channels(funcs, context) {
-  return Object.keys(funcs).reduce(createHandle, {})
+    return Object.keys(funcs).reduce(createHandle, {})
 
-  function createHandle(acc, name) {
-    var handle = Delegator.allocateHandle(
-      funcs[name].bind(null, context)
-    )
+    function createHandle(acc, name) {
+        var handle = Delegator.allocateHandle(
+            funcs[name].bind(null, context))
 
-    acc[name] = handle
-    return acc
-  }
+        acc[name] = handle
+        return acc
+    }
 }

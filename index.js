@@ -5,14 +5,14 @@ var vdomPatch = require('virtual-dom/vdom/patch')
 var vdomCreate = require('virtual-dom/vdom/create-element')
 var extend = require('xtend')
 
+var IdentityManagerComponent = require('./identities/index.js')
+var IdentityManagerView = require('./identities/render.js')
 
-var IdentityManager = require('./identities/index.js')
-var identityManager = new IdentityManager()
-
-app(document.body, identityManager.state, identityManager.render.bind(identityManager))
+app(document.body, IdentityManagerComponent(), IdentityManagerView)
 
 
 function app(elem, state, render, opts) {
+
   Delegator(opts)
 
   var config = extend({
@@ -21,7 +21,7 @@ function app(elem, state, render, opts) {
     patch: vdomPatch,
   }, opts)
 
-  var loop = mainLoop(state, render, config)
+  var loop = mainLoop(state(), render, config)
   if (elem) elem.appendChild(loop.target)
   return state(loop.update)
 }

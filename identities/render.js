@@ -1,24 +1,22 @@
 var h = require('virtual-dom/virtual-hyperscript')
 var action = require('value-event/event')
-var WalletView = require('../wallet/view')
+
+var WalletView = require('../wallet/render.js')
+
 
 module.exports = render
 
 
-function render(state, controller){
+function render(state){
   return h('div.counter', [
-      'You have ' + state.wallets().length
-      + ' wallets.',
+      'You have ' + state.wallets.length + ' wallets.',
       h('input.button', {
           type: 'button',
           value: 'new identity',
-          'ev-click': action(controller.newIdentity),
+          'ev-click': action(state.channels.newIdentity, state),
       }),
       h('ul', state.wallets.map(function(walletState){
-        console.log('rendering wallet:', walletState())
-        debugger
         return h('li', WalletView(walletState))
-      })()),
-  ]);
+      })),
+  ])
 }
-
