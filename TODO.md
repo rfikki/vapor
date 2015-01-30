@@ -1,0 +1,3 @@
+- [ ] load state from localStorage
+- [ ] hyperboot
+- [ ] dogfood wallet?

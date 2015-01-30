@@ -3,7 +3,6 @@ var val = require('observ')
 var array = require('observ-array')
 var setupComponent = require('../mercury.js').state
 var render = require('./render.js')
-var SendEthereum = require('../send-eth/index.js')
 var IdentityManagement = require('../identity-management/list/index.js')
 var Identity = require('../identity-management/identity/index.js')
 
@@ -15,14 +14,12 @@ Wallet.render = render
 function Wallet() {
 
   var defaultState = {
-    identityManagement: IdentityManagement(),
-    sendEthereum: SendEthereum(),
-    currentIdentity: val(null),
-    identities: array([]),
+    to: val(''),
+    amount: val(0),
 
     channels: {
-      setCurrentIdentity: setCurrentIdentity,
-      newIdentity: newIdentity,
+      setTo: setTo,
+      setAmount: setAmount,
     },
   }
 
@@ -32,11 +29,10 @@ function Wallet() {
 
 }
 
-function setCurrentIdentity(state, identity) {
-  state.identity.set(identity)
+function setTo(state, data) {
+  state.to.set(data.value)
 }
 
-function newIdentity(state){
-  var newWallet = Identity()
-  state.identities.push(newWallet)
+function setAmount(state, data) {
+  state.amount.set(data.value)
 }
