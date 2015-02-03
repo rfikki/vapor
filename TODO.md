@@ -1,3 +1,13 @@
+
 - [ ] load state from localStorage
-- [ ] hyperboot
+- [ ] hyperboot + url container
+- [ ] nw.js container
+- [ ] RPC / dummy RPC
+
+
 - [ ] dogfood wallet?
+- [ ] dapp runtime env
+
+
+
+
