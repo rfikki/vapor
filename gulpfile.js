@@ -12,6 +12,7 @@ var del = require('del')
 var browserSync = require('browser-sync')
 var runSequence = require('gulp-run-sequence')
 var connect = require('gulp-connect')
+var sass = require('gulp-sass')
 
 // primary
 
@@ -38,20 +39,23 @@ gulp.task('live-dev', ['dev', 'dev-server'], function() {
   gutil.log(gutil.colors.bgGreen('Watching for changes...'))
 })
 
-
 // node-webkit
 
 gulp.task('build-nw', function(callback){
-  runSequence('clean', ['build-nw-meta', 'build-nw-js', 'build-nw-html', 'build-nw-package'], callback)
+  runSequence('clean', ['build-nw-meta', 'build-nw-js', 'build-nw-css', 'build-nw-html', 'build-nw-package'], callback)
 })
 gulp.task('build-nw-meta', buildNwMeta)
 gulp.task('build-nw-js', buildNwJs)
-gulp.task('build-nw-html', ['build-nw-js'], buildNwHtml)
+gulp.task('build-nw-css', buildNwCss)
+gulp.task('build-nw-html', ['build-nw-js', 'build-nw-css'], buildNwHtml)
 gulp.task('build-nw-package', ['build-nw-meta', 'build-nw-html'], buildNwPackage)
 
 gulp.task('dev-server', startServer)
+
+
 //
 //
+
 
 // development
 
@@ -82,9 +86,11 @@ function devJs() {
     .pipe(connect.reload())
 }
 
-function devCss(callback){
-  connect.reload()
-  callback()
+function devCss(){
+  return gulp.src('./app/**/*.scss')
+    .pipe(sass())
+    .pipe(gulp.dest('./dist/'))
+    .pipe(connect.reload())
 }
 
 function devHtml() {
@@ -116,12 +122,18 @@ function buildNwJs() {
     .pipe(gulp.dest('./dist/'))
 }
 
+function buildNwCss(){
+  return gulp.src('./app/**/*.scss')
+    .pipe(sass())
+    .pipe(gulp.dest('./dist/'))
+}
+
 function buildNwHtml() {
   var inliner = HtmlInline({
     basedir: './dist/',
     ignoreScripts: false,
-    ignoreImages: true,
-    ignoreStyles: true,
+    ignoreImages: false,
+    ignoreStyles: false,
   })
   inliner.on('error', gutil.log.bind(gutil, 'HtmlInline Error'))
   return fs.createReadStream('./app/index.html')

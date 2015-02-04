@@ -12,7 +12,8 @@
     "xtend": "^4.0.0",
     "virtual-dom": "0.0.24",
     "observ-array": "~3.1.0",
-    "geval": "~2.1.1"
+    "geval": "~2.1.1",
+    "flexboxgrid": "~6.1.1"
   },
   "devDependencies": {
     "node-webkit-builder": "~1.0.8",
@@ -28,7 +29,8 @@
     "html-inline": "~1.1.1",
     "del": "~1.1.1",
     "browser-sync": "~2.0.0-rc5",
-    "gulp-run-sequence": "~0.3.2"
+    "gulp-run-sequence": "~0.3.2",
+    "gulp-sass": "~1.3.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
