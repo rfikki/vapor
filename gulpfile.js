@@ -13,6 +13,8 @@ var browserSync = require('browser-sync')
 var runSequence = require('gulp-run-sequence')
 var connect = require('gulp-connect')
 var sass = require('gulp-sass')
+var concatCss = require('gulp-concat-css')
+var addsrc = require('gulp-add-src')
 
 // primary
 
@@ -88,10 +90,16 @@ function devJs() {
 
 function devCss(){
   return gulp.src('./app/**/*.scss')
+    // compile sass
     .pipe(sass())
+    // add lib css
+    .pipe(addsrc('./node_modules/flexboxgrid/dist/flexboxgrid.css'))
+    // build bundle
+    .pipe(concatCss('bundle.css'))
     .pipe(gulp.dest('./dist/'))
     .pipe(connect.reload())
 }
+
 
 function devHtml() {
   return gulp.src('./app/index.html')
@@ -125,6 +133,10 @@ function buildNwJs() {
 function buildNwCss(){
   return gulp.src('./app/**/*.scss')
     .pipe(sass())
+    // add lib css
+    .pipe(addsrc('./node_modules/flexboxgrid/dist/flexboxgrid.css'))
+    // build bundle
+    .pipe(concatCss('bundle.css'))
     .pipe(gulp.dest('./dist/'))
 }
 
