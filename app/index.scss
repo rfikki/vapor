@@ -1,8 +1,25 @@
+// reset
+
+body {
+  margin: 0;
+}
+
+//
+
+// app stuff
+
 body {
   background: pink;
 }
 
-.box-row {
+.panel {
   height: 50px;
   background: orange;
+  border: 1px solid black;
+  border-radius: 6px;
+  margin: 4px;
+}
+
+.left-control-window {
+  width: 200px;
 }

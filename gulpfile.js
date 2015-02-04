@@ -93,7 +93,7 @@ function devCss(){
     // compile sass
     .pipe(sass())
     // add lib css
-    .pipe(addsrc('./node_modules/flexboxgrid/dist/flexboxgrid.css'))
+    .pipe(addsrc('./lib/flexboxgrid.css'))
     // build bundle
     .pipe(concatCss('bundle.css'))
     .pipe(gulp.dest('./dist/'))
@@ -134,7 +134,7 @@ function buildNwCss(){
   return gulp.src('./app/**/*.scss')
     .pipe(sass())
     // add lib css
-    .pipe(addsrc('./node_modules/flexboxgrid/dist/flexboxgrid.css'))
+    .pipe(addsrc('./lib/flexboxgrid.css'))
     // build bundle
     .pipe(concatCss('bundle.css'))
     .pipe(gulp.dest('./dist/'))
