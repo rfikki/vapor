@@ -11,6 +11,7 @@ module.exports = render
 
 function render(state) {
   return h('div', [
+    labeledIdentity('from:', state.currentIdentity),
     labeledInput('to:', state.to, state.channels.setTo),
     labeledInput('amount:', state.amount, state.channels.setAmount),
   ])
@@ -22,11 +23,22 @@ function section(type, content) {
   return h('div', content)
 }
 
+function labeledIdentity(label, identity) {
+  return h('div', [
+    simpleLabel(label),
+    h('pre', identity ? identity.address : '<no identity selected>'),
+  ])
+}
+
 function labeledInput(label, value, sink) {
   return h('div', [
-    h('span', label),
+    simpleLabel(label),
     inputBox(value, sink),
   ])
+}
+
+function simpleLabel(label) {
+  return h('span', label)
 }
 
 function inputBox(value, sink) {

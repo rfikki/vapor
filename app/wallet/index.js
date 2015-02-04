@@ -33,7 +33,7 @@ function Wallet() {
 }
 
 function setCurrentIdentity(state, identity) {
-  state.identity.set(identity)
+  state.currentIdentity.set(identity)
 }
 
 function newIdentity(state){

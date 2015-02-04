@@ -17,7 +17,16 @@ function render(state){
     }),
 
     h('ul', state.identities.map(function(identityState){
-      return h('li', Identity.render(identityState))
+      return h('li', [
+        Identity.render(identityState),
+        button(state.channels.setCurrentIdentity, identityState, 'select')
+      ])
     })),
   ])
+}
+
+function button(channel, context, content){
+  return h('button', {
+    'ev-click': action(channel, context)
+  }, content)
 }

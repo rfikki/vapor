@@ -2,8 +2,7 @@ var h = require('virtual-dom/virtual-hyperscript')
 var action = require('value-event/event')
 var extend = require('xtend')
 
-var IdentityManagement = require('../identity-management/list/index.js')
-var SendEthereum = require('../send-eth/index.js')
+var Wallet = require('../wallet/index.js')
 
 
 module.exports = render
@@ -28,7 +27,10 @@ function controlPanel(state) {
 }
 
 function dappContent(state) {
-  return panel(h('pre', 'DAPP RUNTIME ENVIRONMENT'))
+  return panel([
+    h('pre', 'DAPP RUNTIME ENVIRONMENT'),
+    Wallet.render(state.wallet),
+  ])
 }
 
 //

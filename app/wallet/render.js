@@ -16,13 +16,13 @@ function render(state) {
     identities: state.identities,
     channels: {
       newIdentity: state.channels.newIdentity,
+      setCurrentIdentity: state.channels.setCurrentIdentity,
     }
   })
 
   var sendEthereumState = stateExtend(state.sendEthereum, {
     currentIdentity: state.currentIdentity,
     channels: {
-      newIdentity: state.channels.newIdentity,
       sendEthereum: state.channels.sendEthereum,
     }
   })
@@ -40,6 +40,7 @@ function section(type, content) {
 
 // util
 
+// intelligently merges state and channels
 function stateExtend() {
   var newState = extend.apply(null, arguments)
   var channelArguments = [].slice.apply(arguments)

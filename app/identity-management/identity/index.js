@@ -11,6 +11,7 @@ Identity.render = render
 function Identity() {
 
   var defaultState = {
+    address: val('0x1234'),
     balance: val(0),
 
     channels: {},
