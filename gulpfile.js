@@ -1,4 +1,4 @@
-  var fs = require('fs')
+var fs = require('fs')
 var gulp = require('gulp')
 var gutil = require('gulp-util')
 var sourcemaps = require('gulp-sourcemaps')
@@ -9,12 +9,13 @@ var browserify = require('browserify')
 var HtmlInline = require('html-inline')
 var NwBuilder = require('node-webkit-builder')
 var del = require('del')
+var browserSync = require('browser-sync')
+var runSequence = require('gulp-run-sequence')
+var connect = require('gulp-connect')
 
 // primary
 
-gulp.task('default', ['dev'])
-
-gulp.task('dev', ['live-js'])
+gulp.task('default', ['live-dev'])
 gulp.task('build', ['build-nw'])
 
 // util
@@ -23,39 +24,73 @@ gulp.task('clean', clean)
 
 // development
 
-gulp.task('live-js', liveJs)
+gulp.task('dev', function(callback){
+  runSequence('clean', ['dev-js', 'dev-css', 'dev-html'], callback)
+})
+gulp.task('dev-js', devJs)
+gulp.task('dev-css', devCss)
+gulp.task('dev-html', devHtml)
+
+gulp.task('live-dev', ['dev', 'dev-server'], function() {
+  gulp.watch('./app/**/*.scss', ['dev-css'])
+  gulp.watch('./app/**/*.js', ['dev-js'])
+  gulp.watch('./app/**/*.html', ['dev-html'])
+  gutil.log(gutil.colors.bgGreen('Watching for changes...'))
+})
+
 
 // node-webkit
 
-gulp.task('build-nw', ['build-nw-meta', 'build-nw-js', 'build-nw-html', 'build-nw-package'])
-gulp.task('build-nw-meta', ['clean'], buildNwMeta)
-gulp.task('build-nw-js', ['clean'], buildNwJs)
+gulp.task('build-nw', function(callback){
+  runSequence('clean', ['build-nw-meta', 'build-nw-js', 'build-nw-html', 'build-nw-package'], callback)
+})
+gulp.task('build-nw-meta', buildNwMeta)
+gulp.task('build-nw-js', buildNwJs)
 gulp.task('build-nw-html', ['build-nw-js'], buildNwHtml)
-gulp.task('build-nw-package', ['build-nw-html', 'build-nw-meta'], buildNwPackage)
+gulp.task('build-nw-package', ['build-nw-meta', 'build-nw-html'], buildNwPackage)
 
-
+gulp.task('dev-server', startServer)
 //
 //
-
 
 // development
+
+function startServer() {
+  connect.server({
+    root: './dist',
+    livereload: true,
+  })
+}
 
 var bundler = watchify(browserify('./app/index.js', watchify.args))
 // brfs needed for watchify
 bundler.transform('brfs')
-bundler.on('update', liveJs) // on any dep update, runs the bundler
+// bundler.on('update', devJs) // on any dep update, runs the bundler
 
-function liveJs() {
+function devJs() {
   return bundler.bundle()
     // log errors if they happen
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     // source maps
     .pipe(source('bundle.js'))
     .pipe(buffer())
-    .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-    .pipe(sourcemaps.write('./')) // writes .map file
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(sourcemaps.write('./'))
     // output
     .pipe(gulp.dest('./dist'))
+    // reload
+    .pipe(connect.reload())
+}
+
+function devCss(callback){
+  connect.reload()
+  callback()
+}
+
+function devHtml() {
+  return gulp.src('./app/index.html')
+    .pipe(gulp.dest('./dist/'))
+    .pipe(connect.reload())
 }
 
 // util
