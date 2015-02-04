@@ -1,7 +1,7 @@
 var app = require('./mercury.js').app
 
-var Wallet = require('./wallet/index.js')
+var Main = require('./main/index.js')
 
-app(document.body, Wallet(), Wallet.render)
+app(document.body, Main(), Main.render)
 
 console.log('app started.')
