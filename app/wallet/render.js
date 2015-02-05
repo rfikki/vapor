@@ -1,8 +1,8 @@
 var h = require('virtual-dom/virtual-hyperscript')
 var action = require('value-event/event')
-var extend = require('xtend')
+var stateExtend = require('../mercury').stateExtend
 
-var IdentityManagement = require('../identity-management/list/index.js')
+var IdentityManagement = require('../identity-management/index.js')
 var SendEthereum = require('../send-eth/index.js')
 
 
@@ -36,16 +36,4 @@ function render(state) {
 
 function section(type, content) {
   return h('div', content)
-}
-
-// util
-
-// intelligently merges state and channels
-function stateExtend() {
-  var newState = extend.apply(null, arguments)
-  var channelArguments = [].slice.apply(arguments)
-    .map(function(item){ return item.channels })
-    .filter(function(item){ return !!item })
-  newState.channels = extend.apply(null, channelArguments)
-  return newState
 }

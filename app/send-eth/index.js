@@ -1,33 +1,18 @@
-var extend = require('xtend')
-var val = require('observ')
-var array = require('observ-array')
-var setupComponent = require('../mercury.js').state
+var Component = require('../mercury.js').Component
+var Value = require('observ')
 var render = require('./render.js')
-var IdentityManagement = require('../identity-management/list/index.js')
-var Identity = require('../identity-management/identity/index.js')
 
-module.exports = Wallet
+module.exports = Component({
 
+  to:       { type: Value,  default: null },
+  amount:   { type: Value,  default: 0    },
 
-Wallet.render = render
+  channels: {
+    setTo: setTo,
+    setAmount: setAmount,
+  },
 
-function Wallet() {
-
-  var defaultState = {
-    to: val(''),
-    amount: val(0),
-
-    channels: {
-      setTo: setTo,
-      setAmount: setAmount,
-    },
-  }
-
-  var copy = extend(defaultState)
-  var state = setupComponent(copy)
-  return state
-
-}
+}, render)
 
 function setTo(state, data) {
   state.to.set(data.value)

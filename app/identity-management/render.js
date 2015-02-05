@@ -10,12 +10,7 @@ module.exports = render
 function render(state){
   return h('div.counter', [
     'You have ' + state.identities.length + ' identities.',
-    h('input.button', {
-      type: 'button',
-      value: 'new identity',
-      'ev-click': action(state.channels.newIdentity, state),
-    }),
-
+    button(state.channels.newIdentity, state, 'new'),
     h('ul', state.identities.map(function(identityState){
       return h('li', [
         Identity.render(identityState),

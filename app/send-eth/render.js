@@ -3,7 +3,7 @@ var action = require('value-event/event')
 var changeEvent = require('value-event/change')
 var extend = require('xtend')
 
-var IdentityManagement = require('../identity-management/list/index.js')
+var IdentityManagement = require('../identity-management/index.js')
 
 
 module.exports = render

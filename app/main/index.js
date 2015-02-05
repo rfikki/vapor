@@ -1,25 +1,17 @@
-var extend = require('xtend')
-var val = require('observ')
-var setupComponent = require('../mercury.js').state
-var render = require('./render.js')
+var Component = require('../mercury.js').Component
+var Value = require('observ')
 var Wallet = require('../wallet/index.js')
+var render = require('./render.js')
 
-module.exports = Main
+module.exports = Component({
+  currentView: { type: Value,  default: 'wallet' },
+  wallet:      { type: Wallet, default: null     },
 
+  channels: {
+    test: test,
+  },
+}, render)
 
-Main.render = render
-
-function Main() {
-
-  var defaultState = {
-    currentView: val(null),
-    wallet: Wallet(),
-
-    channels: {},
-  }
-
-  var copy = extend(defaultState)
-  var state = setupComponent(copy)
-  return state
-
+function test(state) {
+  debugger
 }

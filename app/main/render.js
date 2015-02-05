@@ -1,7 +1,7 @@
 var h = require('virtual-dom/virtual-hyperscript')
 var action = require('value-event/event')
 var extend = require('xtend')
-
+var stateExtend = require('../mercury.js').stateExtend
 var Wallet = require('../wallet/index.js')
 
 
@@ -50,15 +50,4 @@ function row(className, content) {
 function col(width, content) {
   var className = '.col-xs' + (width ? '-'+width : '')
   return h('div'+className, content)
-}
-
-// util
-
-function stateExtend() {
-  var newState = extend.apply(null, arguments)
-  var channelArguments = [].slice.apply(arguments)
-    .map(function(item){ return item.channels })
-    .filter(function(item){ return !!item })
-  newState.channels = extend.apply(null, channelArguments)
-  return newState
 }

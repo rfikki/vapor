@@ -1,36 +1,24 @@
-var extend = require('xtend')
-var val = require('observ')
-var array = require('observ-array')
-var setupComponent = require('../mercury.js').state
-var render = require('./render.js')
+var Component = require('../mercury.js').Component
+var Value = require('observ')
+var ObsArray = require('observ-array')
 var SendEthereum = require('../send-eth/index.js')
-var IdentityManagement = require('../identity-management/list/index.js')
-var Identity = require('../identity-management/identity/index.js')
+var IdentityManagement = require('../identity-management/index.js')
+var Identity = require('../identity/index.js')
+var render = require('./render.js')
 
-module.exports = Wallet
+module.exports = Component({
 
+  identityManagement:   { type: IdentityManagement, default: null },
+  sendEthereum:         { type: SendEthereum,       default: null },
+  currentIdentity:      { type: Value,              default: null },
+  identities:           { type: ObsArray,           default: []   },
 
-Wallet.render = render
+  channels: {
+    setCurrentIdentity: setCurrentIdentity,
+    newIdentity: newIdentity,
+  },
 
-function Wallet() {
-
-  var defaultState = {
-    identityManagement: IdentityManagement(),
-    sendEthereum: SendEthereum(),
-    currentIdentity: val(null),
-    identities: array([]),
-
-    channels: {
-      setCurrentIdentity: setCurrentIdentity,
-      newIdentity: newIdentity,
-    },
-  }
-
-  var copy = extend(defaultState)
-  var state = setupComponent(copy)
-  return state
-
-}
+}, render)
 
 function setCurrentIdentity(state, identity) {
   state.currentIdentity.set(identity)
