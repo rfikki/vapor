@@ -1,9 +1,9 @@
 {
-  "name": "vapor",
+  "name": "Vapor",
   "version": "0.0.0",
   "main": "index.html",
   "window": {
-    "title": "VAPOR",
+    "title": "Vapor",
     "toolbar": false,
     "frame": true,
     "resizable": true,
@@ -12,8 +12,6 @@
     "height": 500,
     "min_width": 400,
     "min_height": 200,
-    "max_width": 800,
-    "max_height": 600,
     "transparent": false
   }
 }
