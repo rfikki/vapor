@@ -171,7 +171,7 @@ function anchor(props, content) {
   return h('a', props, content)
 
   function pushState() {
-    routeAtom.set(target)
+    currentRoute.set(target)
   }
 }
 
