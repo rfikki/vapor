@@ -70,7 +70,7 @@ function setupChannels(funcs, context) {
   }
 }
 
-// intelligently merges pojo state and channels
+// intelligently merges pojo states and channels
 function stateExtend() {
   var newState = extend.apply(null, arguments)
   var channelArguments = [].slice.apply(arguments)

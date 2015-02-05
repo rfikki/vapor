@@ -11,25 +11,26 @@ module.exports = render
 
 function render(state) {
 
-  var identityState = stateExtend(state.identityManagement, {
-    currentIdentity: state.currentIdentity,
-    identities: state.identities,
-    channels: {
-      newIdentity: state.channels.newIdentity,
-      setCurrentIdentity: state.channels.setCurrentIdentity,
-    }
-  })
+  // var identityState = stateExtend(state.identityManagement, {
+  //   currentIdentity: state.currentIdentity,
+  //   identities: state.identities,
+  //   channels: {
+  //     newIdentity: state.channels.newIdentity,
+  //     setCurrentIdentity: state.channels.setCurrentIdentity,
+  //   }
+  // })
 
-  var sendEthereumState = stateExtend(state.sendEthereum, {
-    currentIdentity: state.currentIdentity,
-    channels: {
-      sendEthereum: state.channels.sendEthereum,
-    }
-  })
+  // var sendEthereumState = stateExtend(state.sendEthereum, {
+  //   currentIdentity: state.currentIdentity,
+  //   channels: {
+  //     sendEthereum: state.channels.sendEthereum,
+  //   }
+  // })
 
   return h('div', [
-    section('left', IdentityManagement.render(identityState)),
-    section('right', SendEthereum.render(sendEthereumState)),
+    h('span', 'im the wallet?')
+    // section('left', IdentityManagement.render(identityState)),
+    // section('right', SendEthereum.render(sendEthereumState)),
   ])
 }
 

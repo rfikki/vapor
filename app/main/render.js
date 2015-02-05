@@ -3,6 +3,7 @@ var action = require('value-event/event')
 var extend = require('xtend')
 var stateExtend = require('../mercury.js').stateExtend
 var Wallet = require('../wallet/index.js')
+var IdentityManagement = require('../identity-management/index.js')
 
 
 module.exports = render
@@ -22,14 +23,44 @@ function headNav(state) {
   return panel(h('pre', 'VAPOR VAPOR VAPOR'))
 }
 
+var subviews = [
+  { label: 'Identities', name: 'identities' },
+  { label: 'Wallet', name: 'wallet' },
+  { label: 'Transfer', name: 'transfer' },
+]
+
 function controlPanel(state) {
-  return panel(h('pre', 'CONTROL PANEL'))
+  // add option for each subview
+  var content = subviews.map(function(subview){
+    // use bold tag for active subview
+    var tag = state.currentView === subview.name ? 'b' : 'span'
+    return h(tag, {
+      'ev-click': action(state.channels.setCurrentView, subview.name)
+    }, subview.label)
+  })
+  // add panel label to front of content
+  content.unshift(h('pre', 'CONTROL PANEL'))
+  return panel(content)
 }
 
 function dappContent(state) {
+  var currentView
+  switch(state.currentView) {
+
+    case 'identities':
+      currentView = IdentityManagement.render(state.idMgmt)
+      break
+
+    case 'wallet':
+      currentView = Wallet.render(state.wallet)
+      break
+    // case 'transfer':
+    //   currentView = Wallet.render(state.transfer)
+    //   break
+  }
   return panel([
     h('pre', 'DAPP RUNTIME ENVIRONMENT'),
-    Wallet.render(state.wallet),
+    currentView,
   ])
 }
 

@@ -1,17 +1,19 @@
 var Component = require('../mercury.js').Component
 var Value = require('observ')
 var Wallet = require('../wallet/index.js')
+var IdentityManagement = require('../identity-management/index.js')
 var render = require('./render.js')
 
 module.exports = Component({
-  currentView: { type: Value,  default: 'wallet' },
-  wallet:      { type: Wallet, default: null     },
+  currentView: { type: Value,              default: 'wallet' },
+  wallet:      { type: Wallet,             default: null     },
+  idMgmt:      { type: IdentityManagement, default: null     },
 
   channels: {
-    test: test,
+    setCurrentView: setCurrentView,
   },
 }, render)
 
-function test(state) {
-  debugger
+function setCurrentView(state, value) {
+  state.currentView.set(value)
 }

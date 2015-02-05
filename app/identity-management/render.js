@@ -12,10 +12,7 @@ function render(state){
     'You have ' + state.identities.length + ' identities.',
     button(state.channels.newIdentity, state, 'new'),
     h('ul', state.identities.map(function(identityState){
-      return h('li', [
-        Identity.render(identityState),
-        button(state.channels.setCurrentIdentity, identityState, 'select')
-      ])
+      return h('li', Identity.render(identityState))
     })),
   ])
 }
