@@ -20,6 +20,11 @@ body {
   padding: 4px;
 }
 
+// generic, reuseable
+
+.bold {
+  font-weight: bold;
+}
 
 .vertical-container {
   box-sizing: border-box;
@@ -67,6 +72,8 @@ body {
   margin: 4px;
   padding: 4px 12px;
 }
+
+// app sections
 
 .top-nav-section {
   height: 120px;
