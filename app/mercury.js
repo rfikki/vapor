@@ -1,27 +1,27 @@
-var SingleEvent = require('geval/single')
-var MultipleEvent = require('geval/multiple')
 var extend = require('xtend')
 var Value = require('observ')
-var struct = require('observ-struct')
+var Struct = require('observ-struct')
 var Delegator = require('dom-delegator')
-var main = require('main-loop')
+var MainLoop = require('main-loop')
 var diff = require('virtual-dom/vtree/diff')
 var create = require('virtual-dom/vdom/create-element')
 var patch = require('virtual-dom/vdom/patch')
+var h = require('virtual-dom/virtual-hyperscript')
 var raf = require('raf')
+var Source = require('geval')
 
 var mercury = module.exports = {
-    // Entry
-    app: app,
-    // Input
-    channels: channels,
-    // State
-    state: state,
-    stateExtend: stateExtend,
-    setupComponent: setupComponent,
-    Component: Component,
-    // Raf
-    rafListen: rafListen,
+  // Entry
+  App: App,
+  // Component
+  Component: Component,
+  // State
+  stateExtend: stateExtend,
+  // Events
+  rafListen: rafListen,
+  // Routing
+  Router: Router,
+  anchor: anchor,
 }
 
 
@@ -53,7 +53,7 @@ function setupComponent(definition, state) {
     var value = (state[key] !== undefined) ? state[key] : definition[key].default
     componentBase[key] = type(value)
   }
-  var component = struct(componentBase)
+  var component = Struct(componentBase)
   // activate channels
   component.channels.set(setupChannels(channels, component))
   // component is ready
@@ -61,12 +61,12 @@ function setupComponent(definition, state) {
 }
 
 function setupChannels(funcs, context) {
-  return Object.keys(funcs).reduce(createHandle, {});
+  return Object.keys(funcs).reduce(createHandle, {})
 
   function createHandle(acc, name) {
     var handle = Delegator.allocateHandle(funcs[name].bind(null, context))
-    acc[name] = handle;
-    return acc;
+    acc[name] = handle
+    return acc
   }
 }
 
@@ -81,89 +81,114 @@ function stateExtend() {
 }
 
 //
-// Original Mercury
+// Classic Mercury, not-so-lightly modified
 //
 
-function input(names) {
-    if (!names) {
-        return SingleEvent();
-    }
-
-    return MultipleEvent(names);
+function App(elem, observ, render, opts) {
+  Delegator(opts)
+  var loop = MainLoop(observ(), render, extend({
+      diff: diff,
+      create: create,
+      patch: patch
+  }, opts))
+  if (elem) {
+      elem.appendChild(loop.target)
+  }
+  // activate URL routing and update on change
+  Router(function(){ loop.update(observ()) })
+  // return component
+  return observ(loop.update)
 }
-
-// creates a fancy state obj from a pojo
-// hooks up channels
-function state(obj) {
-    var copy = extend(obj);
-    var $channels = copy.channels;
-    var $handles = copy.handles;
-
-    if ($channels) {
-        copy.channels = Value(null);
-    } else if ($handles) {
-        copy.handles = Value(null);
-    }
-
-    var observ = struct(copy);
-    if ($channels) {
-        observ.channels.set(channels($channels, observ));
-    } else if ($handles) {
-        observ.handles.set(channels($handles, observ));
-    }
-    return observ;
-}
-
-function channels(funcs, context) {
-    return Object.keys(funcs).reduce(createHandle, {});
-
-    function createHandle(acc, name) {
-        var handle = Delegator.allocateHandle(
-            funcs[name].bind(null, context));
-
-        acc[name] = handle;
-        return acc;
-    }
-}
-
-function app(elem, observ, render, opts) {
-    Delegator(opts);
-    var loop = main(observ(), render, extend({
-        diff: diff,
-        create: create,
-        patch: patch
-    }, opts));
-    if (elem) {
-        elem.appendChild(loop.target);
-    }
-    return observ(loop.update);
-}
-
 
 function rafListen(observ, fn) {
-    var sending = false;
-    var currValue;
+  var sending = false
+  var currValue
 
-    return observ(onvalue);
+  return observ(onvalue)
 
-    function onvalue(value) {
-        currValue = value;
-        if (sending) {
-            return;
-        }
-
-        sending = true;
-        raf(send);
+  function onvalue(value) {
+    currValue = value
+    if (sending) {
+        return
     }
 
-    function send() {
-        var oldValue = currValue;
-        fn(currValue);
-        sending = false;
+    sending = true
+    raf(send)
+  }
 
-        if (oldValue !== currValue) {
-            sending = true;
-            raf(send);
-        }
+  function send() {
+    var oldValue = currValue
+    fn(currValue)
+    sending = false
+
+    if (oldValue !== currValue) {
+        sending = true
+        raf(send)
     }
+  }
+}
+
+// Router from https://github.com/twilson63/mercury-router/blob/master/lib/router.js
+// modified gently
+var currentRoute = Router.currentRoute = Value(getCurrentPath())
+
+function Router(update) {
+  var inPopState = false
+  var popstates = popstate()
+
+  popstates(onPopState)
+  currentRoute(onRouteSet)
+  currentRoute(update)
+
+  return currentRoute
+
+  function onPopState(uri) {
+    inPopState = true
+    currentRoute.set(uri)
+  }
+
+  function onRouteSet(uri) {
+    if (inPopState) {
+      inPopState = false
+      return
+    }
+
+    pushHistoryState('#'+uri)
+  }
+}
+
+function anchor(props, content) {
+  props = extend(props)
+  // add hash to target
+  var target = props.href
+  props.href = '#'+props.href
+
+  props['ev-click'] = function(event){
+    event.preventDefault()
+    pushState()
+  }
+
+  return h('a', props, content)
+
+  function pushState() {
+    routeAtom.set(target)
+  }
+}
+
+function pushHistoryState(uri) {
+  window.history.pushState(undefined, document.title, uri)
+}
+
+function popstate() {
+  return Source(function broadcaster(broadcast) {
+    window.addEventListener('popstate', onPopState)
+
+    function onPopState() {
+      broadcast(getCurrentPath())
+    }
+  })
+}
+
+function getCurrentPath() {
+  return document.location.hash.slice(1)
 }

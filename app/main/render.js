@@ -1,7 +1,8 @@
 var h = require('virtual-dom/virtual-hyperscript')
 var action = require('value-event/event')
 var extend = require('xtend')
-var stateExtend = require('../mercury.js').stateExtend
+var Router = require('../mercury.js').Router
+var anchor = require('../mercury.js').anchor
 var Wallet = require('../wallet/index.js')
 var SendEth = require('../send-eth/index.js')
 var IdentityManagement = require('../identity-management/index.js')
@@ -25,19 +26,18 @@ function headNav(state) {
 }
 
 var subviews = [
-  { label: 'Identities', name: 'identities' },
-  { label: 'Wallet', name: 'wallet' },
-  { label: 'Transfer', name: 'transfer' },
+  { label: 'Identities', route: '/identities' },
+  { label: 'Wallet', route: '/wallet' },
+  { label: 'Transfer', route: '/transfer' },
 ]
 
 function controlPanel(state) {
+  var currentRoute = Router.currentRoute()
   // add option for each subview
   var content = subviews.map(function(subview){
     // use bold tag for active subview
-    var tag = state.currentView === subview.name ? 'b' : 'span'
-    return h(tag, {
-      'ev-click': action(state.channels.setCurrentView, subview.name)
-    }, subview.label)
+    var className = (currentRoute === subview.route) ? 'bold' : ''
+    return anchor({ className: className, href: subview.route }, subview.label)
   })
   // add panel label to front of content
   content.unshift(h('pre', 'CONTROL PANEL'))
@@ -46,27 +46,28 @@ function controlPanel(state) {
 
 function dappContent(state) {
   var currentView
-  switch(state.currentView) {
 
-    case 'identities':
+  switch(Router.currentRoute()) {
+
+    case '/identities':
       currentView = IdentityManagement.render(state.idMgmt)
       break
 
-    case 'wallet':
+    case '/wallet':
       currentView = Wallet.render(state.wallet)
       break
 
-    case 'transfer':
+    case '/transfer':
       currentView = SendEth.render(state.sendEth)
       break
   }
+
   return panel([
     h('pre', 'DAPP RUNTIME ENVIRONMENT'),
     currentView,
   ])
 }
 
-//
 
 function panel(content) {
   return h('div.panel', content)

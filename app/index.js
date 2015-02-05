@@ -1,4 +1,5 @@
-var App = require('./mercury.js').app
+var App = require('./mercury.js').App
+var Router = require('./mercury.js').Router
 var rafListen = require('./mercury.js').rafListen
 var Main = require('./main/index.js')
 
@@ -20,3 +21,7 @@ rafListen(app, function onChange(value) {
 // start app
 App(document.body, app, Main.render)
 console.log('app started.')
+
+
+// for debug
+window.require = require
