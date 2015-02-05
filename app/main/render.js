@@ -3,6 +3,7 @@ var action = require('value-event/event')
 var extend = require('xtend')
 var stateExtend = require('../mercury.js').stateExtend
 var Wallet = require('../wallet/index.js')
+var SendEth = require('../send-eth/index.js')
 var IdentityManagement = require('../identity-management/index.js')
 
 
@@ -54,9 +55,10 @@ function dappContent(state) {
     case 'wallet':
       currentView = Wallet.render(state.wallet)
       break
-    // case 'transfer':
-    //   currentView = Wallet.render(state.transfer)
-    //   break
+
+    case 'transfer':
+      currentView = SendEth.render(state.sendEth)
+      break
   }
   return panel([
     h('pre', 'DAPP RUNTIME ENVIRONMENT'),

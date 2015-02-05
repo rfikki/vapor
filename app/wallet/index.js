@@ -7,8 +7,6 @@ var render = require('./render.js')
 
 module.exports = Component({
 
-  identityManagement:   { type: IdentityManagement, default: null },
-  sendEthereum:         { type: SendEthereum,       default: null },
   currentIdentity:      { type: Value,              default: null },
 
   channels: {
@@ -20,4 +18,3 @@ module.exports = Component({
 function setCurrentIdentity(state, identity) {
   state.currentIdentity.set(identity)
 }
-

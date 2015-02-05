@@ -11,9 +11,12 @@ module.exports = render
 
 function render(state) {
   return h('div', [
-    labeledIdentity('from:', state.currentIdentity),
-    labeledInput('to:', state.to, state.channels.setTo),
-    labeledInput('amount:', state.amount, state.channels.setAmount),
+    h('h3', 'Send Ether'),
+    h('div.row', [
+      col(null, labeledIdentity('from:', state.currentIdentity)),
+      col(null, labeledInput('to:', state.to, state.channels.setTo)),
+      col(null, labeledInput('amount:', state.amount, state.channels.setAmount)),
+    ]),
   ])
 }
 
@@ -33,6 +36,7 @@ function labeledIdentity(label, identity) {
 function labeledInput(label, value, sink) {
   return h('div', [
     simpleLabel(label),
+    h('br'),
     inputBox(value, sink),
   ])
 }
@@ -50,14 +54,7 @@ function inputBox(value, sink) {
   })
 }
 
-// util
-
-function stateExtend() {
-  var newState = extend.apply(null, arguments)
-  var channelArguments = [].slice.apply(arguments)
-    .map(function(item){ return item.channels })
-    .filter(function(item){ return !!item })
-  newState.channels = extend.apply(null, channelArguments)
-  return newState
+function col(width, content) {
+  var className = '.col-xs' + (width ? '-'+width : '')
+  return h('div'+className, content)
 }
-
